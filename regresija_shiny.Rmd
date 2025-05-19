@@ -1,0 +1,62 @@
+---
+title: "Višestruka linearna regresija i Shiny aplikacija"
+output: html_document
+---
+
+## Uvod
+
+Ova analiza koristi `mtcars` dataset i višestruku linearnu regresiju kako bi objasnila promjene u potrošnji goriva (`mpg`). 
+
+---
+
+## Teorijska pozadina
+
+### OLS (Ordinary Least Squares)
+
+OLS metoda minimizira zbroj kvadrata razlika između stvarnih i predviđenih vrijednosti:
+\[
+\min \sum_{i=1}^n (y_i - \hat{y}_i)^2
+\]
+
+### BLUE
+
+Prema **Gauss-Markov teoremu**, OLS procjene su BLUE (Best Linear Unbiased Estimators) ako su zadovoljeni sljedeći uslovi:
+
+1. Linearni model  
+2. Slučajno uzorkovanje  
+3. Nema savršene multikolinearnosti  
+4. Očekivanje grešaka je nula  
+5. Homoskedastičnost (konstantna varijansa grešaka)
+
+---
+
+### Endogenost
+
+Endogenost nastaje kada neka nezavisna varijabla korelira s greškom. To krši jedan od uslova za BLUE, te može dovesti do pristranih procjena.
+
+---
+
+### Outliere (izdvojene vrijednosti)
+
+Outliere su ekstremne vrijednosti koje značajno odstupaju od ostalih podataka. Mogu:
+
+- Uticati na nagib regresione linije  
+- Povećati standardne greške  
+- Smanjiti validnost zaključaka
+
+---
+
+## Dijagnostika modela
+
+- **Reziduali vs fitted plot** – koristi se za provjeru linearnosti i homoskedastičnosti  
+- **R²** – pokazuje koliko varijanse zavisne varijable je objašnjeno modelom
+
+---
+
+## Korištenje paketa
+
+```r
+library(shiny)
+library(ggplot2)
+library(dplyr)
+library(broom)

@@ -1,0 +1,63 @@
+
+---
+title: "Višestruka linearna regresija - mtcars"
+output: 
+    html_document:
+    runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(shiny)
+library(ggplot2)
+library(broom)
+data(mtcars)
+```
+
+## Odabir nezavisnih varijabli
+
+```{r predictorsInput, echo=FALSE}
+checkboxGroupInput(
+  inputId = "predictors",
+  label = "Odaberi nezavisne varijable za regresiju (zavisna: mpg):",
+  choices = names(mtcars)[!names(mtcars) %in% "mpg"],
+  selected = c("wt", "hp")
+)
+```
+
+## Sažetak modela
+
+```{r modelSummary, echo=FALSE}
+model <- reactive({
+  formula <- as.formula(
+    paste("mpg ~", paste(input$predictors, collapse = " + "))
+  )
+  lm(formula, data = mtcars)
+})
+
+renderPrint({
+  summary(model())
+})
+```
+
+## Tabela koeficijenata
+
+```{r coefTable, echo=FALSE}
+renderTable({
+  broom::tidy(model(), conf.int = TRUE)
+})
+```
+
+## Rezidualni dijagram
+
+```{r residualPlot, echo=FALSE}
+renderPlot({
+  ggplot(data = data.frame(
+    fitted = fitted(model()),
+    residuals = resid(model())
+  ), aes(x = fitted, y = residuals)) +
+    geom_point(color = "blue") +
+    geom_hline(yintercept = 0, linetype = "dashed") +
+    labs(x = "Predviđene vrijednosti", y = "Reziduali") +
+    theme_minimal()
+})
+```
